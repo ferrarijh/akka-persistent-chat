@@ -14,7 +14,7 @@ class PingActor : AbstractActor() {
 
     override fun createReceive(): Receive = receiveBuilder()
         .match(StartMessage::class.java) {
-            context.system.actorSelection("akka://chat-app/user/pong").tell(PingMessage(), self)
+            logger.info("received startMessage")
             context.system.actorSelection("akka://chat-app/user/pong").tell(PingMessage(), self)
         }
         .match(PongMessage::class.java) {
