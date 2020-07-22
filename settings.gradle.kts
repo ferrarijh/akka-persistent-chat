@@ -1,0 +1,2 @@
+rootProject.name = "jonathan-study"
+
