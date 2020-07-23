@@ -1,6 +1,5 @@
 import akka.actor.ActorSystem
 import akka.actor.Props
-import java.util.concurrent.CompletableFuture
 import akka.pattern.Patterns.ask
 import akka.pattern.Patterns.pipe
 import com.typesafe.config.Config
@@ -34,6 +33,9 @@ fun main(){
         ask(pongActor, PingMessage(), t).toCompletableFuture()
     //ask가 return하는게 future.
 
+    pipe(futurePingStart, system.dispatcher()).to(pongActor)
+    pipe(futurePingStart, system.dispatcher()).to(pongActor)
+
     val pingRes = futurePingStart.get() as PingMessage
     val pongRes = futurePongStart.get() as PongMessage
 
@@ -41,6 +43,7 @@ fun main(){
         logger("PingActor received StartMessage and sent PingMessage.")
     else
         logger("PingActor failed to send PingMessage.")
+
     if (pongRes == PongMessage())
         logger("PongActor received PingMessage and sent PongMessage.")
     else
