@@ -34,6 +34,7 @@ class PongActor : AbstractActor() {
         .match(PingMessage::class.java) {
             logger.info("ping: $it")
             sender.tell(PongMessage(), self)
+
         }
         .build()
 
