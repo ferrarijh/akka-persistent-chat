@@ -26,6 +26,9 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:1.7.9")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 
+    //implementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    implementation("junit:junit:4.13")
+
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") // for kotest framework
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion") // for kotest core jvm assertions
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion") // for kotest property test

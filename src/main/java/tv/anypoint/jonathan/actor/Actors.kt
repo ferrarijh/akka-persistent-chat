@@ -19,6 +19,9 @@ class PingActor : AbstractActor() {
         }
         .match(PongMessage::class.java) {
             logger.info("pong: $it")
+            logger.info("received PongMessage.")
+            logger.info("Actor System terminated.")
+            context.system.terminate()
         }
         .build()
 
@@ -33,8 +36,8 @@ class PongActor : AbstractActor() {
     override fun createReceive(): Receive = receiveBuilder()
         .match(PingMessage::class.java) {
             logger.info("ping: $it")
+            logger.info("received PingMessage.")
             sender.tell(PongMessage(), self)
-
         }
         .build()
 
