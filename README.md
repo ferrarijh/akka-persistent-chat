@@ -6,6 +6,7 @@ akka 를 사용한 간단한 CLI 기반 채팅프로그램을 만든다.
 
 ## 31
 * cluster 구성
+  * master(http), slave
 
 ## 32
 * user actor 개발
