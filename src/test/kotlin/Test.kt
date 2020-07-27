@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory
 import org.junit.Test
 import akka.pattern.Patterns.ask
 import akka.pattern.Patterns.pipe
+import io.kotest.matchers.shouldBe
 import mu.KLogging
 import tv.anypoint.jonathan.actor.*
 import java.time.Duration
@@ -76,7 +77,11 @@ class TestPingPong() {
                 //probe.expectMsg(pingMessage)
 
                 //===test output
+                val expect = PongMessage()
                 val future = ask(targetPongActor, PingMessage(), t).toCompletableFuture()
+                val actual = future.get()
+                actual shouldBe expect
+
                 pipe(future, this.system.dispatcher()).to(testProbe.ref)  //'this' necessary?
                 //targetPongActor.tell(pingMessage, ref)    //한 줄로 대체해도 될 듯?
 
