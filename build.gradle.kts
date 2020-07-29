@@ -9,7 +9,7 @@ repositories {
     mavenCentral()
 }
 
-val scalaVersion = "2.11"
+val scalaVersion = "2.12"
 val akkaVersion = "2.5.31"
 val kotestVersion = "4.1.2"
 
@@ -32,6 +32,11 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") // for kotest framework
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion") // for kotest core jvm assertions
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion") // for kotest property test
+
+    implementation("com.typesafe.akka:akka-cluster-metrics_$scalaVersion:$akkaVersion")
+    //implementation("com.swissborg:lithium:0.11.2")
+    //implementation("com.lightbend.akka:akka-split-brain-resolver_$scalaVersion:1.1.14")   //NOT working..
+    //implementation("io.kamon:sigar-loader:1.6.6-rev002")
 }
 
 tasks {
