@@ -1,5 +1,14 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.3.72"
+    application
+    id("com.github.johnrengelman.shadow") version "6.0.0"
+}
+
+application{
+    mainClassName="pubSubPractice.PubSubPracticeMain1Kt"
 }
 
 group = "org.example"
@@ -19,6 +28,7 @@ tasks.withType<Test> {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
+    implementation("com.typesafe.akka:akka-remote_$scalaVersion:$akkaVersion")
     implementation("com.typesafe.akka:akka-actor_$scalaVersion:$akkaVersion")
     implementation("com.typesafe.akka:akka-cluster_$scalaVersion:$akkaVersion")
     implementation("com.typesafe.akka:akka-cluster-tools_$scalaVersion:$akkaVersion")
@@ -38,11 +48,20 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
 }
 
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
 tasks {
+    /*
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+     */
+    named<ShadowJar>("shadowJar") {
+        archiveBaseName.set("org.example")
+        mergeServiceFiles()
     }
 }

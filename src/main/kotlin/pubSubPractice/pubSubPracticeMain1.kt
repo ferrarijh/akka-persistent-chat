@@ -12,17 +12,18 @@ fun main() = runBlocking<Unit> {
     val k = KLogging()
 
     val system1 = ActorSystem.create("ClusterSystem", ConfigFactory.load())
-    val displayer1 = system1.actorOf(Props.create(Displayer::class.java))
+    val displayer1 = system1.actorOf(Props.create(Displayer::class.java), "destination")
     //val sender = system1.actorOf(Props.create(PrivateSender::class.java), "sender")
 
     delay(10000L)
     print(">> User name: ")
     val str = readLine() as String
-    val user1 = system1.actorOf(Props.create(User::class.java), str)
+    val user1 = system1.actorOf(Props.create(User::class.java, str))
 
     //displayer not displaying joining log..
     var input: String
     do {
+        print(">> [me]")
         input = readLine() as String
         user1.tell(input, ActorRef.noSender())
     } while (input != "bye")
