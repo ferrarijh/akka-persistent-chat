@@ -21,12 +21,13 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.typesafe.akka:akka-actor_$scalaVersion:$akkaVersion")
     implementation("com.typesafe.akka:akka-cluster_$scalaVersion:$akkaVersion")
+    implementation("com.typesafe.akka:akka-cluster-tools_$scalaVersion:$akkaVersion")
     implementation("com.typesafe.akka:akka-slf4j_$scalaVersion:$akkaVersion")
     implementation("com.typesafe.akka:akka-testkit_$scalaVersion:$akkaVersion")
     implementation("io.github.microutils:kotlin-logging:1.7.9")
     implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.72")
 
-    //implementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
     implementation("junit:junit:4.13")
 
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") // for kotest framework
@@ -34,9 +35,7 @@ dependencies {
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion") // for kotest property test
 
     implementation("com.typesafe.akka:akka-cluster-metrics_$scalaVersion:$akkaVersion")
-    //implementation("com.swissborg:lithium:0.11.2")
-    //implementation("com.lightbend.akka:akka-split-brain-resolver_$scalaVersion:1.1.14")   //NOT working..
-    //implementation("io.kamon:sigar-loader:1.6.6-rev002")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
 }
 
 tasks {
