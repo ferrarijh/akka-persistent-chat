@@ -1,11 +1,11 @@
-package pubSubPractice
+package tv.anypoint.jonathan.pubsub
 
 import akka.actor.AbstractActor
 import akka.actor.ActorRef
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator
-import akka.serialization.JSerializer
 import mu.KLogging
+import tv.anypoint.jonathan.message.MySerializable
 import java.io.Serializable
 
 abstract class AbstractActorKL: AbstractActor(){
@@ -58,31 +58,31 @@ open class PrivateSender: AbstractActorKL(){ //"DistributedPubSubMediator.Send" 
         }.build()
 }
 
-interface MySerializable{}
-class UserMessage(val from: String, val content: String): Serializable
+class UserMessage(val from: String, val content: String): MySerializable
+/*
+class LoginMessage()
 
-class User(val name: String): AbstractActor(){  //Sender
-    val mediator = DistributedPubSub.get(context.system).mediator()
+class Server: AbstractActorKL(){    //server should be UP first.
 
-    override fun createReceive() = receiveBuilder()
-        .match(String::class.java){
-            val msg = UserMessage(name, it)
-            mediator.tell(DistributedPubSubMediator.SendToAll("/user/destination", msg, true), self)
-        }.build()
 }
+ */
 
-class Displayer: AbstractActorKL(){  //Destination actor should be created with actorOf(props, "destination")
+class User(val name: String): AbstractActorKL(){  //User Actor sends & displays message
+    private val mediator: ActorRef = DistributedPubSub.get(context.system).mediator()
     init {
-        val mediator = DistributedPubSub.get(context.system).mediator()
         mediator.tell(DistributedPubSubMediator.Put(self), self)
     }
-    override fun createReceive(): Receive = receiveBuilder()
-        .match(DistributedPubSubMediator.SubscribeAck::class.java){
-            logger.info(">> displayer [${self.path().toString()}] subscribed successfully.")
+
+    override fun createReceive() = receiveBuilder()
+        .match(DistributedPubSubMediator.SubscribeAck::class.java) {
+            println(">> displayer [${self.path().toString()}] subscribed successfully.")    //first, inform subscription to self
+            val msg = UserMessage("", "$name joined chat!")
+            mediator.tell(DistributedPubSubMediator.SendToAll("/user/destination", msg, true), self)    //then, inform others
+        }.match(String::class.java){
+            val msg = UserMessage(name, it)
+            mediator.tell(DistributedPubSubMediator.SendToAll("/user/destination", msg, true), self)
         }.match(UserMessage::class.java){
-            for(i in 1..100)
-                print("\b")
-            println(">> [${it.from}] ${it.content}")
+            println("\r>> [${it.from}] ${it.content}")
             print(">> [me]")
         }.build()
 }

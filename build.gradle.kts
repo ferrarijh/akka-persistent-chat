@@ -8,7 +8,7 @@ plugins {
 }
 
 application{
-    mainClassName="pubSubPractice.PubSubPracticeMain1Kt"
+    mainClassName="tv.anypoint.jonathan.pubSubPractice.PubSubPracticeMain1Kt"
 }
 
 group = "org.example"
@@ -46,6 +46,8 @@ dependencies {
 
     implementation("com.typesafe.akka:akka-cluster-metrics_$scalaVersion:$akkaVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
+
+    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.12")
 }
 
 tasks.withType<KotlinCompile> {
