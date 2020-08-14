@@ -25,6 +25,9 @@ class ByeMessage(val userId: String): Serializable
 
 class ReceiveAck(val userId: String): Serializable
 
+class AskCurrentUsers: Serializable
+class CurrentUsers(val users: List<String>): Serializable
+
 class ChatPersistentServer(private var chatState: ChatState): AbstractPersistentActor() {
     private val connected = hashSetOf<ActorPath>()  //name, (isCon, path)
     private val snapShotInterval = 1000L
@@ -51,16 +54,16 @@ class ChatPersistentServer(private var chatState: ChatState): AbstractPersistent
             chatState.update(it)
         }.match(ConnectAck::class.java){
             chatState.update(it)
-        }
-        .match(SnapshotOffer::class.java){
+        }.match(SnapshotOffer::class.java){
             chatState = it.snapshot() as ChatState
         }.build()
 
     override fun createReceive(): Receive = receiveBuilder()
         .match(ConnectReq::class.java){
-            //1)add sender to isConnected. 2)send ConnectReqAck(contentPair<userList, log>) 3)send previous messages if client's log is out-of-date.
+            //1)add sender to connected. 2)send ConnectReqAck(contentPair<userList, log>) 3)send previous messages if client's log is out-of-date.
             val sName = sender.path().name()
-
+            logger.info("received ConnectReq() from: [$sName}]")
+            
             val clientLast: Int? = chatState.userState[sName]
             val log = mutableListOf<ChatMessage>()
             var increm: Int = 0
@@ -84,6 +87,7 @@ class ChatPersistentServer(private var chatState: ChatState): AbstractPersistent
             sender.tell(conRA, self)
         }.match(ConnectAck::class.java) { cAck ->
             connected.add(sender.path())
+            logger.info("connected: ${sender.path()}")
             persist(cAck) {
                 chatState.update(it)
                 if (lastSequenceNr() % snapShotInterval == 0L && lastSequenceNr() != 0L)
@@ -99,25 +103,39 @@ class ChatPersistentServer(private var chatState: ChatState): AbstractPersistent
             writer.write("${++chatState.lastLine}\\t${cMsg.name}\\t${cMsg.content}\\n") //1)
             sender.tell(ReceiveAck(""), self)   //2)
             for (iPath in connected){   //3)
-                println("'''server running foreach..'''")
+                logger.info("- asking cMsg to: $iPath ..")
                 if (iPath.name() == cMsg.name)
                     continue
                 ask(context.actorSelection(iPath), cMsg, Duration.ofSeconds(2)).toCompletableFuture()    //여기서 원래 sender 정보 죽는듯?
-                    .exceptionally{
-                        connected.remove(iPath)
+                    .whenComplete{ rAck, e ->
+                        if(e != null){
+                            connected.remove(iPath)
+                            logger.info("- timeout for $iPath . Removing from connected.")
+                        }else
+                            logger.info("- rAck received from: $iPath")
                     }
             }
             persist(cMsg){  //4)
                 chatState.update(it)
             }
         }.match(ByeMessage::class.java){
-            connected.remove(it.userId)
-            val bMsg = ByeMessage(it.userId)
+            connected.remove(sender.path())
+            logger.info("disconnected: ${sender.path()}")
+            val bMsg = ByeMessage(sender.path().name())
             connected.forEach{ e ->
                 val aSel = context.actorSelection(e)
                 aSel.tell(bMsg, self)
             }
+        }.match(AskCurrentUsers::class.java){
+            logger.info("CurrentUsers asked from: ${sender.path()}")
+            val lis = mutableListOf<String>
+            connected.forEach{
+                lis.add(it.name())
+            }
+            sender.tell(CurrentUsers(lis), self)
         }.build()
+    
+    companion object: KLogging()
 }
 
 class ChatClient: AbstractActorKL(){
@@ -131,6 +149,8 @@ class ChatClient: AbstractActorKL(){
             println("*--- good bye ---*")
             server.tell(ByeMessage(self.path().name()), self)
             context.system.terminate()
+        }.matchEquals("users"){
+            server.tell(AskCurrentUsers(), self)
         }.match(String::class.java){
             val cMsg = ChatMessage(self.path().name(), it)
             val future = ask(server, cMsg, Duration.ofSeconds(2)).toCompletableFuture()
@@ -138,6 +158,8 @@ class ChatClient: AbstractActorKL(){
             future.whenComplete{ rAck, e -> //rAck only for debug!!
                 if (e != null)
                     println("server response timeout...")
+                else
+                    print(">> ")    //this means you're connected with server :)
             }
         }.match(ConnectReqAck::class.java) {
             println("*--- Connected!")
@@ -163,7 +185,9 @@ class ChatClient: AbstractActorKL(){
         }.match(ByeMessage::class.java){
             println("\r*--- [${it.userId}] left chat.")
             print(">> ")
-        }build()
+        }.match(CurrentUsers::class.java){
+            print("\r*--- current users : ${it.users}")
+        }.build()
 }
 
 //
