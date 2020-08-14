@@ -14,15 +14,10 @@ fun main() = runBlocking<Unit>{
     var buf = readLine()
     print(">> ")
     val client = system.actorOf(Props.create(ChatClient::class.java), buf)
-    outer@ while(true){
+    while(true){
         buf = readLine()
-        when(buf){
-            "connect" -> client.tell("connect", ActorRef.noSender())
-            "bye" -> {
-                client.tell("bye", ActorRef.noSender())
-                break@outer
-            }
-            else -> client.tell(buf, ActorRef.noSender())
-        }
+        client.tell(buf, noSender)
+        if (buf=="bye")
+            break
     }
 }
