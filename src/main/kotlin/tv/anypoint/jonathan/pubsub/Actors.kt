@@ -5,12 +5,56 @@ import akka.actor.ActorRef
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator
 import mu.KLogging
-import tv.anypoint.jonathan.message.MySerializable
 import java.io.Serializable
 
 abstract class AbstractActorKL: AbstractActor(){
     companion object: KLogging()
 }
+
+class UserMessage(val from: String, val content: String): Serializable
+class ConnectAck(val name: String): Serializable
+class Bye(val name: String): Serializable
+
+class User(private var name: String): AbstractActorKL(){  //User Actor sends & displays message
+    private val connected = mutableMapOf<String, Boolean>()
+    private val path: String = "/user/destination"
+    private val mediator: ActorRef = DistributedPubSub.get(context.system).mediator()
+    init {
+        mediator.tell(DistributedPubSubMediator.Put(self), self)
+    }
+
+    override fun preStart() {
+        super.preStart()
+        mediator.tell(DistributedPubSubMediator.SendToAll(path, ConnectAck(name), true), self)
+    }
+    override fun createReceive(): Receive = receiveBuilder()
+        .match(ConnectAck::class.java) {
+            if (connected[it.name] != true) {
+                connected[it.name] = true
+                println("\r>> new user '${it.name}' connected!")
+                print(">> [me]")
+            }
+        }.match(String::class.java){
+            if (it=="bye"){
+                mediator.tell(DistributedPubSubMediator.SendToAll(path, Bye(name), true), self)
+                print(">> See you again!")
+                context.system.terminate()
+            }else {
+                val msg = UserMessage(name, it)
+                mediator.tell(DistributedPubSubMediator.SendToAll(path, msg, true), self)
+            }
+        }.match(UserMessage::class.java) {
+            println("\r>> [${it.from}] ${it.content}")
+            print(">> [me]")
+        }.match(Bye::class.java){
+            println("\r>> user '${it.name}' disconnected.")
+            print(">> [me]")
+            connected[it.name] = false
+        }.build()
+}
+
+/*--- below are just for reference :) ---*/
+
 
 open class Subscriber: AbstractActorKL() {
     init{
@@ -55,34 +99,5 @@ open class PrivateSender: AbstractActorKL(){ //"DistributedPubSubMediator.Send" 
         .match(String::class.java) {
             mediator.tell(DistributedPubSubMediator.Send("/user/dest", it.toUpperCase(), true)
                 , self)
-        }.build()
-}
-
-class UserMessage(val from: String, val content: String): MySerializable
-/*
-class LoginMessage()
-
-class Server: AbstractActorKL(){    //server should be UP first.
-
-}
- */
-
-class User(val name: String): AbstractActorKL(){  //User Actor sends & displays message
-    private val mediator: ActorRef = DistributedPubSub.get(context.system).mediator()
-    init {
-        mediator.tell(DistributedPubSubMediator.Put(self), self)
-    }
-
-    override fun createReceive() = receiveBuilder()
-        .match(DistributedPubSubMediator.SubscribeAck::class.java) {
-            println(">> displayer [${self.path().toString()}] subscribed successfully.")    //first, inform subscription to self
-            val msg = UserMessage("", "$name joined chat!")
-            mediator.tell(DistributedPubSubMediator.SendToAll("/user/destination", msg, true), self)    //then, inform others
-        }.match(String::class.java){
-            val msg = UserMessage(name, it)
-            mediator.tell(DistributedPubSubMediator.SendToAll("/user/destination", msg, true), self)
-        }.match(UserMessage::class.java){
-            println("\r>> [${it.from}] ${it.content}")
-            print(">> [me]")
         }.build()
 }

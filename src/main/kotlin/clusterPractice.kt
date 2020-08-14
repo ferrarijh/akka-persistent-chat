@@ -9,13 +9,21 @@ import mu.KLogging
 
 
 fun main(){
-    val config = ConfigFactory.load("TestHere")
-    val sys2551 = ActorSystem.create("ClusterSystem", configWithPort(2551))
-    sys2551.actorOf(Props.create(MyClusterListener::class.java))
-    val sys2552 = ActorSystem.create("ClusterSystem", configWithPort(2552))
-    sys2552.actorOf(Props.create(MyClusterListener::class.java))
-    val sysDef = ActorSystem.create("ClusterSystem", configWithPort(0))
-    sysDef.actorOf(Props.create(MyClusterListener::class.java))
+    try {
+        val config = ConfigFactory.load("TestHere")
+        val sys2551 = ActorSystem.create("ClusterSystem", configWithPort(2551))
+        val actor2551 = sys2551.actorOf(Props.create(MyClusterListener::class.java))
+        val sys2552 = ActorSystem.create("ClusterSystem", configWithPort(2552))
+        sys2552.actorOf(Props.create(MyClusterListener::class.java))
+        val sysDef = ActorSystem.create("ClusterSystem", configWithPort(0))
+        sysDef.actorOf(Props.create(MyClusterListener::class.java))
+
+        val k = KLogging()
+        val path = actor2551.path().toString()
+        k.logger.info(">>path : $path")
+    }catch(e: Exception){
+        e.printStackTrace()
+    }
 }
 
 fun configWithPort(port: Int): Config{
@@ -24,7 +32,7 @@ fun configWithPort(port: Int): Config{
     return ConfigFactory.parseMap(overrides).withFallback(ConfigFactory.load())
 }
 
-class MyClusterListener: AbstractActor(){
+open class MyClusterListener: AbstractActor(){
     companion object: KLogging()
     private val cluster = Cluster.get(context.system)
 

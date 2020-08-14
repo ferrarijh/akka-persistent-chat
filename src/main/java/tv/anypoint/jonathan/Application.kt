@@ -31,5 +31,9 @@ fun main() {
     val pingActorRef = actorSystem.actorOf(Props.create(PingActor::class.java), "ping")
     val pongActorRef = actorSystem.actorOf(Props.create(PongActor::class.java), "pong")
 
+    //val k = KLogging()
+    //val path1 = pingActorRef.path().toString()
+    //k.logger.info(">> pingActor : $path1")
+
     pingActorRef.tell(StartMessage(), ActorRef.noSender())
 }

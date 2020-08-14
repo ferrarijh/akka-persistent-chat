@@ -26,10 +26,8 @@ class TestPingPong() {
 
                 val startMessage = StartMessage()
                 val inputProbe = TestKit(system)
-
                 val outputProbe = TestKit(system)
-                targetPingActor.tell(inputProbe.ref, ref)
-                //pongActor.tell(outputProbe.ref, ref)
+                //targetPingActor.tell(inputProbe.ref, ref)   //이런개념없음
 
                 /*===thenApply 실행x
                 ask(targetPingActor, startMessage, t).toCompletableFuture()
