@@ -21,6 +21,7 @@ class ChatState(val userState: MutableMap<String, Int>, var lastLine: Int): Seri
 class ConnectReq: Serializable
 class ConnectReqAck(val users: List<String>, val log: List<ChatMessage>, val increm: Int): Serializable
 class ConnectAck(val userId: String, val increm: Int): Serializable
+class ByeMessage(val userId: String): Serializable
 
 class ReceiveAck(val userId: String): Serializable
 
@@ -97,16 +98,24 @@ class ChatPersistentServer(private var chatState: ChatState): AbstractPersistent
         }.match(ChatMessage::class.java){ cMsg ->  //1)write to fs, 2)acknowledge client of receiving cMsg, 3)broadcast. 4)persist message 'event'(modify lastLine).
             writer.write("${++chatState.lastLine}\\t${cMsg.name}\\t${cMsg.content}\\n") //1)
             sender.tell(ReceiveAck(""), self)   //2)
-            connected.forEach{ e -> //3)
+            for (iPath in connected){   //3)
                 println("'''server running foreach..'''")
-                val aSel = context.actorSelection(e)
-                ask(aSel, cMsg, Duration.ofSeconds(2)).toCompletableFuture()
+                if (iPath.name() == cMsg.name)
+                    continue
+                ask(context.actorSelection(iPath), cMsg, Duration.ofSeconds(2)).toCompletableFuture()    //여기서 원래 sender 정보 죽는듯?
                     .exceptionally{
-                        connected.remove(e)
+                        connected.remove(iPath)
                     }
             }
             persist(cMsg){  //4)
                 chatState.update(it)
+            }
+        }.match(ByeMessage::class.java){
+            connected.remove(it.userId)
+            val bMsg = ByeMessage(it.userId)
+            connected.forEach{ e ->
+                val aSel = context.actorSelection(e)
+                aSel.tell(bMsg, self)
             }
         }.build()
 }
@@ -120,6 +129,7 @@ class ChatClient: AbstractActorKL(){
             println("connection request sent..")
         }.matchEquals("bye") {
             println("*--- good bye ---*")
+            server.tell(ByeMessage(self.path().name()), self)
             context.system.terminate()
         }.match(String::class.java){
             val cMsg = ChatMessage(self.path().name(), it)
@@ -150,7 +160,10 @@ class ChatClient: AbstractActorKL(){
             sender.tell(ReceiveAck(self.path().name()), self)
             println("\r>> [${it.name}] ${it.content}")
             print(">> ")
-        }.build()
+        }.match(ByeMessage::class.java){
+            println("\r*--- [${it.userId}] left chat.")
+            print(">> ")
+        }build()
 }
 
 //
