@@ -1,4 +1,4 @@
-package tv.anypoint.jonathan
+package tv.anypoint.jonathan.pingpong
 
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
@@ -7,9 +7,9 @@ import akka.cluster.Cluster
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import mu.KLogging
-import tv.anypoint.jonathan.actor.PingActor
-import tv.anypoint.jonathan.actor.PongActor
-import tv.anypoint.jonathan.actor.StartMessage
+import tv.anypoint.jonathan.pingpong.actor.PingActor
+import tv.anypoint.jonathan.pingpong.actor.PongActor
+import tv.anypoint.jonathan.pingpong.actor.StartMessage
 
 class Application {
     companion object : KLogging()

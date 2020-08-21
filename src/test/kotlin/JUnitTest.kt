@@ -7,7 +7,7 @@ import akka.pattern.Patterns.ask
 import akka.pattern.Patterns.pipe
 import io.kotest.matchers.shouldBe
 import mu.KLogging
-import tv.anypoint.jonathan.actor.*
+import tv.anypoint.jonathan.pingpong.actor.*
 import java.time.Duration
 
 //pipe(future, system.dispatcher()).to(myActor) sends future's result to myActor.
@@ -76,7 +76,8 @@ class TestPingPong() {
 
                 //===test output
                 val expect = PongMessage()
-                val future = ask(targetPongActor, PingMessage(), t).toCompletableFuture()
+                val future = ask(targetPongActor,
+                    PingMessage(), t).toCompletableFuture()
                 val actual = future.get()
                 actual shouldBe expect
 

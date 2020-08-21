@@ -8,7 +8,7 @@ plugins {
 }
 
 application{
-    mainClassName="tv.anypoint.jonathan.pubsub.ClientKt"
+    mainClassName="tv.anypoint.jonathan.persistence.PServerKT"
 }
 
 group = "org.example"
@@ -47,12 +47,10 @@ dependencies {
     implementation("com.typesafe.akka:akka-cluster-metrics_$scalaVersion:$akkaVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
 
-    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.12")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
 
     implementation("com.typesafe.akka:akka-persistence_$scalaVersion:$akkaVersion")
-
+    implementation("com.google.protobuf:protobuf-java:3.13.0")
     implementation("org.fusesource.leveldbjni:leveldbjni-all:1.8")
 }
 
@@ -60,16 +58,7 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 tasks {
-    /*
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-     */
     named<ShadowJar>("shadowJar") {
-        archiveBaseName.set("org.example")
-        mergeServiceFiles()
+        append("reference.conf")
     }
 }

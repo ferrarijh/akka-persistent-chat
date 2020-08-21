@@ -1,4 +1,4 @@
-package tv.anypoint.jonathan.actor
+package tv.anypoint.jonathan.pingpong.actor
 
 import akka.actor.AbstractActor
 import mu.KLogging

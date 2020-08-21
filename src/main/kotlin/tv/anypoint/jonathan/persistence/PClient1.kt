@@ -4,20 +4,25 @@ import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
 import com.typesafe.config.ConfigFactory
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import tv.anypoint.jonathan.persistence.actors.ChatClient
+import tv.anypoint.jonathan.persistence.actors.LoginListener
 
-fun main() = runBlocking<Unit>{
-    val system = ActorSystem.create("ClusterSystem", ConfigFactory.load())
-    delay(10000)
-    print(">> Your name is: ")
-    var buf = readLine()
+fun main(){
+    println("Waiting for server response... Please wait until additional message appears...")
+    val myConfig = ConfigFactory.parseString("akka.loglevel=OFF").withFallback(ConfigFactory.load())
+    val system = ActorSystem.create("ClusterSystem", myConfig)
+    val login = system.actorOf(Props.create(LoginListener::class.java), "login")
+    val id = readLine()!!
+    val client = system.actorOf(Props.create(ChatClient::class.java), id)
+    runClient(client)
+}
+
+fun runClient(clientRef: ActorRef){
+    println("\t1)type 'connect' to join chat. 2)type 'users' to see list of current users. 3)type 'bye' to exit.")
     print(">> ")
-    val client = system.actorOf(Props.create(ChatClient::class.java), buf)
-    while(true){
-        buf = readLine()
-        client.tell(buf, noSender)
-        if (buf=="bye")
-            break
-    }
+    var buf: String
+    do{
+        buf = readLine()!!
+        clientRef.tell(buf, ActorRef.noSender())
+    }while(buf != "bye")
 }

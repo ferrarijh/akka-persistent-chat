@@ -25,7 +25,8 @@ class User(private var name: String): AbstractActorKL(){  //User Actor sends & d
 
     override fun preStart() {
         super.preStart()
-        mediator.tell(DistributedPubSubMediator.SendToAll(path, ConnectAck(name), true), self)
+        mediator.tell(DistributedPubSubMediator.SendToAll(path,
+            ConnectAck(name), true), self)
     }
     override fun createReceive(): Receive = receiveBuilder()
         .match(ConnectAck::class.java) {
@@ -36,7 +37,8 @@ class User(private var name: String): AbstractActorKL(){  //User Actor sends & d
             }
         }.match(String::class.java){
             if (it=="bye"){
-                mediator.tell(DistributedPubSubMediator.SendToAll(path, Bye(name), true), self)
+                mediator.tell(DistributedPubSubMediator.SendToAll(path,
+                    Bye(name), true), self)
                 print(">> See you again!")
                 context.system.terminate()
             }else {

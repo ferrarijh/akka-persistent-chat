@@ -10,7 +10,6 @@ import mu.KLogging
 
 fun main(){
     try {
-        val config = ConfigFactory.load("TestHere")
         val sys2551 = ActorSystem.create("ClusterSystem", configWithPort(2551))
         val actor2551 = sys2551.actorOf(Props.create(MyClusterListener::class.java))
         val sys2552 = ActorSystem.create("ClusterSystem", configWithPort(2552))

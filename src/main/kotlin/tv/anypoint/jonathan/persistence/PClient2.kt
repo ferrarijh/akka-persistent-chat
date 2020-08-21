@@ -1,24 +1,17 @@
 package tv.anypoint.jonathan.persistence
 
-import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
 import com.typesafe.config.ConfigFactory
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import tv.anypoint.jonathan.persistence.actors.ChatClient
+import tv.anypoint.jonathan.persistence.actors.LoginListener
 
-fun main() = runBlocking<Unit>{
-    val system = ActorSystem.create("ClusterSystem", ConfigFactory.load())
-    delay(10000)
-    print(">> Your name is: ")
-    var buf = readLine()
-    print(">> ")
-    val client = system.actorOf(Props.create(ChatClient::class.java), buf)
-    outer@ while(true){
-        buf = readLine()
-        when(buf){
-            "bye" -> break@outer
-            else -> client.tell(buf, ActorRef.noSender())
-        }
-    }
+fun main(){
+    println("Waiting for server response... Please wait until additional message appears...")
+    val myConfig = ConfigFactory.parseString("akka.loglevel=OFF").withFallback(ConfigFactory.load())
+    val system = ActorSystem.create("ClusterSystem", myConfig)
+    val login = system.actorOf(Props.create(LoginListener::class.java), "login")
+    val id = readLine()!!
+    val client = system.actorOf(Props.create(ChatClient::class.java), id)
+    runClient(client)
 }

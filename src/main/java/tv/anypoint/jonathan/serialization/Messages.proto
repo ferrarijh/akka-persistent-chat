@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_package = "tv.anypoint.jonathan.serialization";
+option java_outer_classname = "MyPersistenceMessages";
+
+message ChatMessage{
+    string userId = 1;
+    string content = 2;
+}
+
+message ConnectReq{}
+message ConnectReqAck{
+    repeated string users = 1;
+    repeated ChatMessage log = 2;
+    int32 increm = 3;
+}
+message ConnectAck{
+    string userId = 1;
+    int32 increm = 2;
+}
+
+message JoinMessage{
+    string userId = 1;
+}
+
+message ByeMessage{
+    string userId = 1;
+}
+message ReceiveAck{
+    string userId = 1;
+}
+message AskCurrentUsers{}
+message CurrentUsers{
+    repeated string users = 1;
+}
+
+message Debug{}
+
+message PreConnected{}
