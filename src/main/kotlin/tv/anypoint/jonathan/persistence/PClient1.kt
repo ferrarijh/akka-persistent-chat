@@ -18,7 +18,7 @@ fun main(){
 }
 
 fun runClient(clientRef: ActorRef){
-    println("\t1)type 'connect' to join chat. 2)type 'users' to see list of current users. 3)type 'bye' to exit.")
+    println("*--- 1)type 'connect' to join chat. 2)type 'users' to see list of current users. 3)type 'bye' to exit.")
     print(">> ")
     var buf: String
     do{

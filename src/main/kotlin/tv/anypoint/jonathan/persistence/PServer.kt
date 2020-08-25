@@ -9,8 +9,7 @@ import tv.anypoint.jonathan.persistence.actors.ChatState
 
 fun main(){
     val system = ActorSystem.create("ClusterSystem", ConfigFactory.load())
-    val defState =
-        ChatState(mutableMapOf(), 0)
+    val defState = ChatState(mutableMapOf(), 0)
     val server = system.actorOf(Props.create(ChatPersistentServer::class.java, defState), "server")
     var buf: String
     while(true){

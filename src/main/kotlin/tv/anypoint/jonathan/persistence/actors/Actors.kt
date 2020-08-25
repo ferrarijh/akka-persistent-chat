@@ -214,6 +214,7 @@ class ChatPersistentServer(private var chatState: ChatState): AbstractPersistent
                 "delete snapshot"->deleteSnapshots(
                     SnapshotSelectionCriteria.create(lastSequenceNr(), System.currentTimeMillis())
                 )
+                "shutdown" -> context.system.terminate()
             }
         }.match(SaveSnapshotSuccess::class.java){
             logger.info("successfully saved snapshot with lastSequenceNr(): ${lastSequenceNr()} ")
@@ -305,7 +306,7 @@ class ChatClient: AbstractActorKL(){
 class LoginListener: AbstractActorKL(){
     override fun createReceive(): Receive = receiveBuilder()
         .match(PreConnected::class.java) {
-            print("requesting current users info to server..")
+            println("requesting current users info to server..")
             val future = ask(sender, AskCurrentUsers.newBuilder().build(), Duration.ofSeconds(5)).toCompletableFuture()
                 as CompletableFuture<CurrentUsers>
             future.whenComplete{ cu, ex ->

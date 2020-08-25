@@ -8,7 +8,7 @@ plugins {
 }
 
 application{
-    mainClassName="tv.anypoint.jonathan.persistence.PServerKT"
+    mainClassName="tv.anypoint.jonathan.persistence.PClient1Kt"
 }
 
 group = "org.example"
