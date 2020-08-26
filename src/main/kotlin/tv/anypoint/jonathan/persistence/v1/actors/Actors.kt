@@ -1,4 +1,4 @@
-package tv.anypoint.jonathan.persistence.actors
+package tv.anypoint.jonathan.persistence.v1.actors
 
 import akka.actor.ActorPath
 import akka.cluster.Cluster
@@ -35,23 +35,6 @@ class ChatState(val userState: MutableMap<String, Int>, var lastLine: Int): Seri
     fun copy() = ChatState(userState, lastLine)
 }
 
-/*
-class ChatMessage(val userId: String, val content: String): Serializable
-class PreConnected: Serializable    //only for LoginActor
-
-class ConnectReq: Serializable
-class ConnectReqAck(val users: List<String>, val log: List<ChatMessage>, val increm: Int): Serializable
-class ConnectAck(val userId: String, val increm: Int): Serializable
-
-class ByeMessage(val userId: String): Serializable
-
-class ReceiveAck(val userId: String): Serializable
-
-class AskCurrentUsers: Serializable
-class CurrentUsers(val users: List<String>): Serializable
-
-class Debug //only for debugging state
- */
 class ChatPersistentServer(private var chatState: ChatState): AbstractPersistentActor() {
     private val cluster = Cluster.get(context.system)
     private val connected = HashMap<String, ActorPath>()    //first: set<userId>, second: set<path>

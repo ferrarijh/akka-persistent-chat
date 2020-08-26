@@ -9,11 +9,8 @@ import java.time.Duration
 import java.util.concurrent.CompletableFuture
 
 fun main(){
-    val sys = ActorSystem.create("ClusterSystem", ConfigFactory.load())
+    val myConfig = ConfigFactory.parseString("akka.remote.netty.tcp.port=2551")
+        .withFallback(ConfigFactory.load())
+    val sys = ActorSystem.create("ClusterSystem", myConfig)
     val r = sys.actorOf(Props.create(Replier::class.java), "replier")
-    //a.tell(BirthMessage(), ActorRef.noSender())
-
-
-    //val sel = sys.actorSelection("/user/*")
-    //sel.tell(Reveal(), ActorRef.noSender())
 }

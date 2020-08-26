@@ -1,4 +1,4 @@
-package tv.anypoint.jonathan.persistence.serializer
+package tv.anypoint.jonathan.persistence.v1.serializer
 
 import akka.serialization.SerializerWithStringManifest
 import tv.anypoint.jonathan.serialization.MyPersistenceMessages.*
@@ -14,6 +14,7 @@ class MyPersistenceSerializer: SerializerWithStringManifest() {
     private val JOINMESSAGE_MANIFEST = JoinMessage::class.java.name
     private val BYEMESSAGE_MANIFEST = ByeMessage::class.java.name
 
+    //initiate connection with 3 way handshake
     private val CONNECTREQ_MANIFEST = ConnectReq::class.java.name
     private val CONNECTREQACK_MANIFEST = ConnectReqAck::class.java.name
     private val CONNECTACK_MANIFEST = ConnectAck::class.java.name

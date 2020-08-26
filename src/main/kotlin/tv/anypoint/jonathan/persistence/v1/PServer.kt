@@ -1,11 +1,11 @@
-package tv.anypoint.jonathan.persistence
+package tv.anypoint.jonathan.persistence.v1
 
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
 import com.typesafe.config.ConfigFactory
-import tv.anypoint.jonathan.persistence.actors.ChatPersistentServer
-import tv.anypoint.jonathan.persistence.actors.ChatState
+import tv.anypoint.jonathan.persistence.v1.actors.ChatPersistentServer
+import tv.anypoint.jonathan.persistence.v1.actors.ChatState
 
 fun main(){
     val system = ActorSystem.create("ClusterSystem", ConfigFactory.load())
