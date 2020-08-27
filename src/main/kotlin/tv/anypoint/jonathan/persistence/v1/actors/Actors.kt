@@ -186,7 +186,7 @@ class ChatPersistentServer(private var chatState: ChatState): AbstractPersistent
         }.match(Debug::class.java) {
             logger.info("/*--- chatState for debugging ---*/")
             chatState.userState.forEach{print("$it ")}
-            logger.info("")
+            println()
             logger.info("lastLine: ${chatState.lastLine}")
             logger.info("lastSequenceNr(): ${lastSequenceNr()}")
             logger.info("/*--------------------------------*/")

@@ -8,7 +8,7 @@ plugins {
 }
 
 application{
-    mainClassName="tv.anypoint.jonathan.persistence.v1.PClientKt"
+    mainClassName="tv.anypoint.jonathan.persistence.v1.PServerKt"
 }
 
 group = "org.example"
@@ -50,11 +50,14 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
+
 tasks {
     named<ShadowJar>("shadowJar") {
         append("reference.conf")
     }
 }
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+project.gradle.startParameter.excludedTaskNames.add("test")

@@ -8,7 +8,8 @@ import tv.anypoint.jonathan.persistence.v1.actors.ChatPersistentServer
 import tv.anypoint.jonathan.persistence.v1.actors.ChatState
 
 fun main(){
-    val system = ActorSystem.create("ClusterSystem", ConfigFactory.load())
+    val myconfig = ConfigFactory.parseString("akka.loglevel=DEBUG").withFallback(ConfigFactory.load())
+    val system = ActorSystem.create("ClusterSystem", myconfig)
     val defState = ChatState(mutableMapOf(), 0)
     val server = system.actorOf(Props.create(ChatPersistentServer::class.java, defState), "server")
     var buf: String

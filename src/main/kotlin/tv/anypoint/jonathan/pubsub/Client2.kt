@@ -6,11 +6,8 @@ import akka.actor.Props
 import com.typesafe.config.ConfigFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import mu.KLogging
 
 fun main() = runBlocking<Unit>{
-    val k = KLogging()
-
     val system = ActorSystem.create("ClusterSystem", ConfigFactory.load())
 
     delay(10000L)
