@@ -14,7 +14,7 @@ Using only a single actor system for the whole scheme would be desirable.
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/scheme.png">
 </div>
 
- 3 types of actors here - server actor, client actor, login lister. Server subscribes to MemberUp event so it can send
+ Here are 3 types of actors - server actor, client actor, login lister. Server subscribes to MemberUp event so it can send
 PreConnected message to login listener. Login listener then prompts commandline to input user id. When user press enter
 with after the id, client system creates client actor having name of the id. After creation, the client actor attempts
 to establish connection with server via 3-way handshake. The handshake process is enabled with 3 types of messages - ConnectReq,
