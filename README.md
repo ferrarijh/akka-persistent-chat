@@ -26,6 +26,13 @@ of each user's last entry(telling the point where the user submitted last messag
 event sourcing via akka journal. State will be saved at some points regularly since replaying a large pile of events
 can be slow after some time.
 
+<div>
+    <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/scheme2.png">
+</div>
+
+When client 'john' sends a message wrapped with ChatMessage class, server will distribute the message to other clients in the chat room via ```ask ``` method.
+Once the server receives ReceiveAck the sender's chat state is be persisted. If server does not receive ReceiveAck in designated timeout the client('doe' in this case) will be popped from currently connected user hashmap.
+
 ## Demo
 
 Let's run the app!
