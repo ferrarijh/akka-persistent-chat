@@ -1,21 +1,14 @@
-# jonathan-study
-akka 를 사용한 간단한 CLI 기반 채팅 프로그램 을 만든다.
+# CLI chat app using akka cluster
 
-## 30
-* akka 공부
+CLI chat app for studying akka cluster, persistence and serialization.
+(Akka journal with snapshot for persistence, google protobuf for message serialization)
 
-## 31
-* cluster 구성
-  * server, client
+## FYI
 
-## 32
-* user actor 개발 (client)
+In this implementation a server has its own actor system and each client also runs on respective actor system. This is not a good practice and a single actor system is enough to handle much larger traffic.
+Using only a single actor system for the whole scheme would be desirable.
 
-## 33
-* room actor 개발 (server)
+## Demo
 
-## 34
-* 기능 개발
+Let's run the app!
 
-## 35
-* 테스트 및 데모
