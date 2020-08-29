@@ -39,27 +39,27 @@ Server's up at port 2551.
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/2.png">
 </div>
 Then first client is up at 2552. It shows current users in the chat room, which is yet empty.
-<br>
+<br></br>
 <div>
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/3 firstcon.png">
 </div>
 This client connected with userid 'jonathan'. Since 'jonathan' is first to join chat, it tells him that he's first in the chat.
-<br>
+<br></br>
 <div>
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/4 richardcon.png">
 </div>
 Second client 'richard' connects. He can see 'jonathan' is in the chat before typing in his id.
-<br>
+<br></br>
 <div>
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/6.png">
 </div>
 'jonathan' gets notified of 'richard' joining chat.
-<br>
+<br></br>
 <div>
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/7 richard bye.png">
 </div>
 Bye typing in 'bye' user can leave chat.
-<br>
+<br></br>
 <div>
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/8 kevin.png">
 </div>
