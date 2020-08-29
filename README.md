@@ -34,7 +34,7 @@ Let's run the app!
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/1.png">
 </div>
 Server's up at port 2551.
-<br>
+<br></br>
 <div>
     <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/2.png">
 </div>
