@@ -69,7 +69,7 @@ at richard's screen. New user 'kevin' is told he's up to date since he have just
 ## Persisted state
 
 State of server representing each chat state of a client will be recovered in need through akka journal's event sourcing - with akka snapshot, at somepoint.
-Three messages are peristed to represent client's chat state.
+Three types of messages are persisted to represent client's chat state.
 
 ```kotlin
 class ChatState(val userState: MutableMap<String, Int>, var lastLine: Int): Serializable {  //map<name, cnt>
