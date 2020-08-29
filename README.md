@@ -99,3 +99,44 @@ class ChatState(val userState: MutableMap<String, Int>, var lastLine: Int): Seri
     fun copy() = ChatState(userState, lastLine)
 }
 ```
+
+## Protobuf serialization
+11 types of user defined messages are used in the app. They're all defined in 'Message.proto', compiled with protocol buffer compiler as java class(MyPersistenceMessages.java),
+and further implemented with 'MyPersistenceSerializer.kt'. Compiled messages and serializer is matched by configuring 'application.conf', 
+
+```
+syntax = "proto3";
+
+option java_package = "tv.anypoint.jonathan.serialization";
+option java_outer_classname = "MyPersistenceMessages";
+
+message ChatMessage{
+    string userId = 1;
+    string content = 2;
+}
+message ConnectReq{}
+message ConnectReqAck{
+    repeated string users = 1;
+    repeated ChatMessage log = 2;
+    int32 increm = 3;
+}
+message ConnectAck{
+    string userId = 1;
+    int32 increm = 2;
+}
+message JoinMessage{
+    string userId = 1;
+}
+message ByeMessage{
+    string userId = 1;
+}
+message ReceiveAck{
+    string userId = 1;
+}
+message AskCurrentUsers{}
+message CurrentUsers{
+    repeated string users = 1;
+}
+message Debug{}
+message PreConnected{}
+```
