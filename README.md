@@ -11,7 +11,7 @@ Using only a single actor system for the whole scheme would be desirable.
 # Scheme
 
 <div>
-    <img src="https://github.com/ferrarijh/akka-persistent-chat/tree/develop/demo/scheme.png">
+    <img src="https://github.com/ferrarijh/akka-persistent-chat/blob/develop/demo/scheme.png">
 </div>
 
  3 types of actors here - server actor, client actor, login lister. Server subscribes to MemberUp event so it can send
