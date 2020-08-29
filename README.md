@@ -65,3 +65,30 @@ Bye typing in 'bye' user can leave chat.
 </div>
 'richard' comes back and 3rd user 'kevin' joins chat. Messages submitted by 'jonathan' after richard left are recovered
 at richard's screen. New user 'kevin' is told he's up to date since he have just joined the chat.
+
+## Persisted state
+
+State of server representing each chat state of a client will be recovered in need through akka journal's event sourcing - with akka snapshot, at somepoint.
+Three messages are peristed to represent client's chat state.
+
+```kotlin
+class ChatState(val userState: MutableMap<String, Int>, var lastLine: Int): Serializable {  //map<name, cnt>
+    fun update(cAck: ConnectAck){
+        if (userState[cAck.userId] == null)
+            userState[cAck.userId] = cAck.increm
+        else {
+            val newLast: Int = userState[cAck.userId]!!.plus(cAck.increm)
+            userState[cAck.userId] = newLast-1
+        }
+    }
+    fun update(rAck: ReceiveAck){
+        val newLast: Int = userState[rAck.userId]!!.inc()
+        userState[rAck.userId] = newLast-1
+    }
+    fun update(c: ChatMessage){
+        ++lastLine
+        userState[c.userId] = lastLine-1
+    }
+    fun copy() = ChatState(userState, lastLine)
+}
+```
