@@ -22,7 +22,7 @@ class MyPersistenceSerializer: SerializerWithStringManifest() {
     private val ASKCURRENTUSERS_MANIFEST = AskCurrentUsers::class.java.name
     private val CURRENTUSERS_MANIFEST = CurrentUsers::class.java.name
 
-    private val DEBUG_MANIFEST = ByeMessage::class.java.name
+    private val DEBUG_MANIFEST = Debug::class.java.name
 
     override fun identifier(): Int = 940524
 
